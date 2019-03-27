@@ -73,13 +73,15 @@ public class AccountService {
      * 分页查询
      * @param pageNumber
      * @param pageSize
+     * @param paymentType
+     * @param deteTime
      * @return
      */
-    public AccountResult findAccountAll(Account account, Integer pageNumber, Integer pageSize) {
+    public AccountResult findAccountAll(Integer pageNumber, Integer pageSize, String paymentType, String deteTime) {
         //调用分页插件 当前页 当前页条数
         PageHelper.startPage(pageNumber,pageSize);
         //根据条件分页查询
-        Page<Account> page =(Page<Account>)accountMapper.findAccountAll(account);
+        Page<Account> page =(Page<Account>)accountMapper.findAccountAll(paymentType,deteTime);
         //获取总页数
         long pageTotal = page.getTotal();
         //获取结果集

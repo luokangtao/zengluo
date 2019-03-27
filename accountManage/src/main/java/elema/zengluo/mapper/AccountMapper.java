@@ -35,8 +35,10 @@ public interface AccountMapper {
     /**
      * 根据条件分页查询
      * @return
+     * @param paymentType
+     * @param deteTime
      */
-    List<Account> findAccountAll(Account account);
+    List<Account> findAccountAll(String paymentType, String deteTime);
 
     /**
      * 根据主键id查找对象

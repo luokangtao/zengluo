@@ -3,39 +3,52 @@ var mymodule=angular.module("myapp",["pagination"]);
 
 //service层
 mymodule.service("uploadService",function ($http) {
-    //MultipartFile文件导入
-    this.upload=function () {
-        //基于html5中的对象获取(追加)上传文件
+
+    this.upload=function (agent,paymentType,remark,money) {
+        //基于html5中的对象获取(追加)上传文件 通过FormData构造函数创建一个空对象
         var formData = new FormData();
         //参数一：后端接收文件的参数名称 参数二：获取文件，其中file代表<input type="file" id="file" />中的id
         formData.append("file",file.files[0]);
-
+        //经办人 (如果没值需要初始化一个值,不然后台会爆undefined)
+        formData.append("agent",(agent==undefined?"":agent));
+        //收入/支出类型 (如果没值需要初始化一个值,不然后台会爆undefined)
+        formData.append("paymentType",(paymentType==undefined?"":paymentType));
+        //备注 (如果没值需要初始化一个值,不然后台会爆undefined)
+        formData.append("remark",(remark==undefined?"":remark));
+        //价钱 (如果没值需要初始化一个值,不然后台会爆undefined)
+        formData.append("money",(money==undefined?"":money));
         return $http({
             method:"post",
-            url : "../ExportController/importExcel",//上传地址
+            url : "../uploadController/uploadImages",
             data : formData,
             headers : {'Content-Type' : undefined}, //上传文件必须是这个类型，默认text/plain  作用:相当于设置enctype="multipart/form-data"
             transformRequest : angular.identity  //对整个表单进行二进制序列化
-        })}
+        })};
 });
 
 //controller层
 // 时间格式转换成字符串 首先要引入$filter过滤器，然后调用filter的方法
 mymodule.controller("accountController",function ($scope,$http,$filter,uploadService) {
 
-    //新增实体类
+    //初始化新增实体类
     $scope.entity={};
 
+    //初始化查询对象
+    $scope.findAccount={};
+
     //新增收入支出账目
-    $scope.addFriend=function () {
-        $http.post("../accountController/addAccount",$scope.entity).success(function (response) {
-            if(response.success){//如果为true
-                $scope.entity={};//上传成功后清空数据
-                alert(response.message);//弹窗提示成功
+    $scope.uploadFile=function(){
+        //调用service方法,并且代入所需参数
+        uploadService.upload($scope.entity.agent,$scope.entity.paymentType,$scope.entity.remark,$scope.entity.money).success(function(response){
+            if(response.success){//上传到linux成功
+                $scope.entity={};//新增成功后,清空数据
+                alert(response.message); //把返回来的图片地址赋值给广告图片地址
+                $scope.reloadList();//重新加载分页查询
             }else {
-                alert(response.message);//弹窗提示失败
-            }}).error(function (response) {//如果出现错误
-            alert(response.message);//弹窗提示错误原因
+                alert(response.message);//弹窗提示
+            }}
+        ).error(function (response) {//错误异常
+            alert(response.message);//弹窗提示
         })};
 
     //解决分页插件二次触发的问题
@@ -80,7 +93,10 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
     $scope.agentList=["曾利健","罗康涛","叶锐"];
 
     //定义支付类型
-    $scope.paymentTypeList=["收入","支出"];
+    $scope.paymentTypeList=["全部","收入","支出"];
+
+    //定义时间类型
+    $scope.deteTimeList=["全部","今天","昨天","当月","上月","全年"];
 
     //根据id删除账目
     $scope.deleteAccount=function (id) {
@@ -126,4 +142,93 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
         })};
 
 
+    //html回显的图片 ==> 销毁预览的图片
+    $scope.destroyImage=function () {
+        console.log("执行了这个方法前:"+file.files[0]);
+        var files = document.getElementById("file");
+        files.outerHTML=file.outerHTML;
+        console.log("执行了这个方法后:"+file.files[0]);
+        //获取img标签信息
+        var img = document.getElementById("imgName");
+        //赋地址值
+        img.src ="";
+        //显示图片
+        img.style.display="none";
+        //获取div属性 imgNameDiv
+        var div = document.getElementById("imgNameDiv");
+        //显示
+        div.style.display="none";
+        //获取br属性 imgNameBr
+        var br = document.getElementById("imgNameBr");
+        //显示
+        br.style.display="none";
+    }
+
 });
+
+
+
+
+//html页面回显预览图片
+function previewImage(file) {
+    /*
+    * file：file控件
+    */
+    var tip = "格式有误,只支持上传jpg/png/gif的格式文件!"; // 设定弹窗提示信息
+    var filters = {
+        "jpeg": "/9j/4",
+        "gif": "R0lGOD",
+        "png": "iVBORw"
+    }
+
+    if (window.FileReader) { // html5方案
+        for (var i = 0, f; f = file.files[i]; i++) {
+            var fr = new FileReader();
+            fr.onload = function (e) {
+                var src = e.target.result;
+                if (!validateImg(src)) {
+                    alert(tip)
+                } else {
+                    showPrvImg(src); //展示图片
+                }
+            }
+            fr.readAsDataURL(f);
+        }
+    } else { // 降级处理
+        if (!/\.jpg$|\.png$|\.gif$/i.test(file.value)) {
+            alert(tip);
+        } else {
+            showPrvImg(file.value); //展示图片
+        }
+    }
+
+    //校验图片格式
+    function validateImg(data) {
+        var pos = data.indexOf(",") + 1;
+        for (var e in filters) {
+            if (data.indexOf(filters[e]) === pos) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    //html页面回显预览图片
+    function showPrvImg(src) {
+        //获取img标签信息
+        var img = document.getElementById("imgName");
+        //赋地址值
+        img.src = src;
+        //显示图片
+        img.style.display = "block";
+        //获取div属性 imgNameDiv
+        var div = document.getElementById("imgNameDiv");
+        //显示
+        div.style.display="block";
+        //获取br属性 imgNameBr
+        var br = document.getElementById("imgNameBr");
+        //显示
+        br.style.display="block";
+
+    }
+}

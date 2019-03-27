@@ -31,13 +31,26 @@
             <h3 class="text-center">
                 管理账目
             </h3>
-            <button class="btn btn-primary" data-toggle="modal" data-target="#addFriend" ng-click="updateClassifyStatus(true)">新增收入支出</button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addFriend" ng-click="updateClassifyStatus(true)">新增数据</button>
             <button class="btn btn-primary" data-toggle="modal"  ng-click="exportExcel()">导出数据</button>
+            <br>
+            <br>
+                <div class="input-group" >
+                    <span class="input-group-addon">类型:</span>
+                    <select class="form-control"  ng-model="findAccount.paymentType" ng-options="x for x in paymentTypeList"></select>
+                    <span class="input-group-addon">时间:</span>
+                    <select class="form-control"  ng-model="findAccount.deteTime" ng-options="x for x in deteTimeList"></select>
+                </div><br>
+            <div class="input-group" >
+                <button  type="button" class="btn btn-default" style="margin-right: 10px">查询</button>
+                <button  type="button" class="btn btn-default" ng-click="findAccount={}">重置</button>
+            </div><br>
+
             <table class="table table-hover">
                 <tr>
                     <th>序号</th>
                     <th>经办人</th>
-                    <th>时间</th>
+                    <!--<th style="display:none;">时间</th>-->
                     <th>类型</th>
                     <th style="display:none;">图片</th>
                     <th>备注</th>
@@ -47,7 +60,7 @@
                 <tr ng-repeat="pojo in list">
                     <td>{{$index+1}}</td>
                     <td>{{pojo.agent}}</td>
-                    <td>{{pojo.currentTine}}</td>
+                    <!--<td style="display:none;">{{pojo.currentTine}}</td>-->
                     <td>{{pojo.paymentType}}</td>
                     <td style="display:none;">{{pojo.imgUrl}}</td>
                     <td>{{pojo.remark}}</td>
@@ -71,7 +84,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <!--ng-click="destroyImage()" 销毁回显图片-->
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="destroyImage()">&times;</button>
                 <h4 class="modal-title" id="addFriendLabel">
                     <span>新增账目</span>
                 </h4>
@@ -81,21 +95,24 @@
                         <span class="input-group-addon">经办人:</span>
                         <select class="form-control" ng-model="entity.agent" ng-options="x for x in agentList"></select>
                     </div><br>
-                    <div class="input-group addClassify" >
-                        <span class="input-group-addon">时间:</span>
-                        <select class="form-control" ng-model="entity.currentTine"></select></li>
-                    </div><br>
+                    <!--<div class="input-group addClassify" >-->
+                        <!--<span class="input-group-addon">时间:</span>-->
+                        <!--<select class="form-control" ng-model="entity.currentTine"></select></li>-->
+                    <!--</div><br>-->
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">类型:</span>
                         <select class="form-control"  ng-model="entity.paymentType" ng-options="x for x in paymentTypeList"></select>
                     </div><br>
                     <div class="input-group addClassify" >
-                        <span class="input-group-addon">图片:</span>
-                        <select class="form-control"  ng-model="entity.imgUrl"></select>
+                        <span class="input-group-addon">图片上传:</span>
+                        <input type="file" id="file" class="form-control" onchange="previewImage(this)"/>
                     </div><br>
+                    <div class="input-group addClassify" id="imgNameDiv" style="display: none" >
+                            <img id="imgName" style="width:200px;height:200px;display:none"/>
+                    </div><br id="imgNameBr" style="display: none">
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">备注:</span>
-                        <input type="text" class="remark" ng-model="entity.remark">
+                        <input type="text" class="form-control" ng-model="entity.remark">
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">价钱:</span>
@@ -104,7 +121,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" type="button" ng-click="entity={}">重置</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <!--ng-click="destroyImage()" 销毁回显图片-->
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="destroyImage()">关闭</button>
                 <button class="btn btn-primary" type="button" ng-click="addAccount()">提交</button>
             </div>
         </div>

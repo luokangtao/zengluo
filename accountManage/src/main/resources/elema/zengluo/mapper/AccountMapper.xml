@@ -50,12 +50,6 @@
             valid
         FROM
             account
-        WHERE
-            valid = #{valid}
-            AND
-            paymentType = #{paymentType}
-            AND
-            agent = #{agent}
     </select>
 
     <select id="findAccountOne" resultType="elema.zengluo.pojo.Account">
