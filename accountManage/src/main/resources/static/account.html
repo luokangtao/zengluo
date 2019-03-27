@@ -23,7 +23,7 @@
 </head>
 <!--ng-app定义模版  ng-controller定义控制器  ng-init初始化调用方法-->
 <!--分页插件是自动加载页面,所以这里不用初始化再加载-->
-<body ng-app="myapp" ng-controller="FriendController" ng-init="selectUserClassifyList()">
+<body ng-app="myapp" ng-controller="accountController">
 
 <div class="container">
     <div class="row clearfix">
@@ -54,8 +54,8 @@
                     <td>{{pojo.money}}</td>
                     <!--调用图片删除方法-->
                     <td>
-                        <button ng-click="deleteFriend(pojo.id)">删除</button>
-                        <button data-toggle="modal" data-target="#addFriend" ng-click="updateClassifyStatus(false)">修改</button>
+                        <button ng-click="deleteAccount(pojo.id)">删除</button>
+                        <button data-toggle="modal" data-target="#addFriend">修改</button>
                     </td>
                 </tr>
             </table>
@@ -73,8 +73,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="addFriendLabel">
-                    <span ng-if="calssifyStatus">新增账目</span>
-                    <span ng-if="!calssifyStatus">修改账目</span>
+                    <span>新增账目</span>
                 </h4>
             </div>
             <div class="modal-body" style="margin: 0 auto">
@@ -84,7 +83,7 @@
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">时间:</span>
-                        <select class="form-control" ng-model="entity.classifyId" ng-options="x.id as x.classifyName for x in ClassifyList"></select></li>
+                        <select class="form-control" ng-model="entity.currentTine"></select></li>
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">类型:</span>
@@ -92,21 +91,21 @@
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">图片:</span>
-                        <select class="form-control"  ng-model="entity.relation"></select>
+                        <select class="form-control"  ng-model="entity.imgUrl"></select>
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">备注:</span>
-                        <input type="text" class="form-control" ng-model="entity.phone">
+                        <input type="text" class="remark" ng-model="entity.remark">
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">价钱:</span>
-                        <input type="text" class="form-control" ng-model="entity.wechat">
+                        <input type="text" class="form-control" ng-model="entity.money">
                     </div><br>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" type="button" ng-click="entity={}">重置</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button class="btn btn-primary" type="button" ng-click="addFriend()">提交</button>
+                <button class="btn btn-primary" type="button" ng-click="addAccount()">提交</button>
             </div>
         </div>
     </div>
