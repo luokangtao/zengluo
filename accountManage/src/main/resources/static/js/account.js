@@ -60,8 +60,8 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
     //分页查询配置 (这个对象配置原本就是已经配置好的,不是我们写的)一进页面就查询第一页.
     $scope.paginationConf={
         currentPage:1,//当前页码
-        totalItems:10,//总记录条数
-        itemsPerPage:10,//每页记录数
+        totalItems:50,//总记录条数
+        itemsPerPage:50,//每页记录数
         perPageOptions:[100,200,350,500,3000],//分页选项,下拉选择一页多少条记录
         onChange:function(){//更改页面时触发事件
             if(!$scope.reload) {
@@ -102,7 +102,7 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
     $scope.findPaymentTypeList=["全部","收入","支出"];
 
     //定义时间类型
-    $scope.deteTimeList=["今天","昨天","当月","上月"];
+    $scope.deteTimeList=["全部","今天","昨天","当月","上月"];
 
     //根据id删除账目
     $scope.deleteAccount=function (id) {
