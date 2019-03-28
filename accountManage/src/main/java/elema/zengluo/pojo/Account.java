@@ -16,14 +16,13 @@ public class Account implements Serializable {
     int id;
 
     //创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" ,timezone = "GMT+8")
     Date createTime;
 
     //更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" ,timezone = "GMT+8")
     Date updateTime;
 
-    //时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" ,timezone = "GMT+8")
-    Date currentTine;
 
     //经办人
     String agent;
@@ -62,14 +61,6 @@ public class Account implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Date getCurrentTine() {
-        return currentTine;
-    }
-
-    public void setCurrentTine(Date currentTine) {
-        this.currentTine = currentTine;
     }
 
     public String getAgent() {

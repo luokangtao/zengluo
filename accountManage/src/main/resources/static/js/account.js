@@ -36,8 +36,11 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
     //初始化查询对象
     $scope.findAccount={};
 
+    //初始化修改对象
+    $scope.findEntity={};
+
     //新增收入支出账目
-    $scope.uploadFile=function(){
+    $scope.addAccount=function(){
         //调用service方法,并且代入所需参数
         uploadService.upload($scope.entity.agent,$scope.entity.paymentType,$scope.entity.remark,$scope.entity.money).success(function(response){
             if(response.success){//上传到linux成功
@@ -59,7 +62,7 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
         currentPage:1,//当前页码
         totalItems:10,//总记录条数
         itemsPerPage:10,//每页记录数
-        perPageOptions:[10,20,30,40,50],//分页选项,下拉选择一页多少条记录
+        perPageOptions:[100,200,350,500,3000],//分页选项,下拉选择一页多少条记录
         onChange:function(){//更改页面时触发事件
             if(!$scope.reload) {
                 return;
@@ -71,13 +74,13 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
             }, 200);
         }};
 
-    //查询所有通讯录
-    $scope.findAllFriend=function(pageNumber,pageSize){
+    //查询所有账目
+    $scope.findAccountAll=function(pageNumber,pageSize){
         $http.post("../accountController/findAccountAll?pageNumber="+pageNumber+"&"+"pageSize="+pageSize).success(function (response){
             if(response.success){
                 //总记录条数--设置分页配置里面的参数$scope.paginationConf
-                $scope.paginationConf.totalItems=response.pageResult.total;
-                $scope.list=response.pageResult.rows;
+                $scope.paginationConf.totalItems=response.pageTotal;
+                $scope.list=response.list;
             }}).error(function (response) {
             alert(response.message);
         })};
@@ -85,18 +88,21 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
     // 如果数据变更就重新加载  分页查询方法(请求/响应)
     $scope.reloadList=function(){
         ////分页查询方法(请求/响应)参数1:当前页码参数2:当前页有多少条数据
-        $scope.findAllFriend($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage)
+        $scope.findAccountAll($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage)
     };
 
 
     //定义经办人
     $scope.agentList=["曾利健","罗康涛","叶锐"];
 
+    //定义查看的支付类型
+    $scope.paymentTypeList=["收入","支出"];
+
     //定义支付类型
-    $scope.paymentTypeList=["全部","收入","支出"];
+    $scope.findPaymentTypeList=["全部","收入","支出"];
 
     //定义时间类型
-    $scope.deteTimeList=["全部","今天","昨天","当月","上月","全年"];
+    $scope.deteTimeList=["今天","昨天","当月","上月"];
 
     //根据id删除账目
     $scope.deleteAccount=function (id) {
@@ -110,6 +116,19 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
                 }}).error(function (response) {//如果出现错误
                 alert(response.message);//弹窗提示错误原因
             })}};
+
+
+    //根据id查找账目
+    $scope.findAccountOne=function (id) {
+            $http.post("../accountController/findAccountOne?id="+id).success(function (response) {
+                if(response.success){
+                    console.log("根据id查找账目:"+response);
+                    $scope.findEntity=response.account;//查询出来的对象赋值
+                }else {
+                    alert(response.message);//弹窗提示失败
+                }}).error(function (response) {//如果出现错误
+                alert(response.message);//弹窗提示错误原因
+            })};
 
 
     //导出excel数据
@@ -141,27 +160,26 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
             alert(data.message);//弹窗提示错误原因
         })};
 
-
     //html回显的图片 ==> 销毁预览的图片
     $scope.destroyImage=function () {
-        console.log("执行了这个方法前:"+file.files[0]);
-        var files = document.getElementById("file");
-        files.outerHTML=file.outerHTML;
-        console.log("执行了这个方法后:"+file.files[0]);
-        //获取img标签信息
-        var img = document.getElementById("imgName");
-        //赋地址值
-        img.src ="";
-        //显示图片
-        img.style.display="none";
-        //获取div属性 imgNameDiv
-        var div = document.getElementById("imgNameDiv");
-        //显示
-        div.style.display="none";
-        //获取br属性 imgNameBr
-        var br = document.getElementById("imgNameBr");
-        //显示
-        br.style.display="none";
+            console.log("执行了这个方法前:"+file.files[0]);
+            var files = document.getElementById("file");
+            files.outerHTML=file.outerHTML;
+            console.log("执行了这个方法后:"+file.files[0]);
+            //获取img标签信息
+            var img = document.getElementById("imgName");
+            //赋地址值
+            img.src ="";
+            //显示图片
+            img.style.display="none";
+            //获取div属性 imgNameDiv
+            var div = document.getElementById("imgNameDiv");
+            //显示
+            div.style.display="none";
+            //获取br属性 imgNameBr
+            var br = document.getElementById("imgNameBr");
+            //显示
+            br.style.display="none";
     }
 
 });
@@ -215,20 +233,19 @@ function previewImage(file) {
 
     //html页面回显预览图片
     function showPrvImg(src) {
-        //获取img标签信息
-        var img = document.getElementById("imgName");
-        //赋地址值
-        img.src = src;
-        //显示图片
-        img.style.display = "block";
-        //获取div属性 imgNameDiv
-        var div = document.getElementById("imgNameDiv");
-        //显示
-        div.style.display="block";
-        //获取br属性 imgNameBr
-        var br = document.getElementById("imgNameBr");
-        //显示
-        br.style.display="block";
-
+            //获取img标签信息
+            var img = document.getElementById("imgName");
+            //赋地址值
+            img.src = src;
+            //显示图片
+            img.style.display = "block";
+            //获取div属性 imgNameDiv
+            var div = document.getElementById("imgNameDiv");
+            //显示
+            div.style.display="block";
+            //获取br属性 imgNameBr
+            var br = document.getElementById("imgNameBr");
+            //显示
+            br.style.display="block";
     }
 }

@@ -10,9 +10,9 @@
     <insert id="addAccount">
         INSERT INTO
             account
-        (createTime,currentTine,agent,paymentType,imgUrl,money)
+        (createTime,agent,paymentType,imgUrl,money)
         values
-        (#{createTime},#{currentTine},#{agent},#{paymentType},#{imgUrl},#{money})
+        (#{createTime},#{agent},#{paymentType},#{imgUrl},#{money})
     </insert>
 
 
@@ -41,7 +41,6 @@
     <select id="findAccountAll" resultType="elema.zengluo.pojo.Account">
         SELECT
             id,
-            currentTine,
             agent,
             paymentType,
             imgUrl,
@@ -55,7 +54,8 @@
     <select id="findAccountOne" resultType="elema.zengluo.pojo.Account">
         SELECT
             id,
-            currentTine,
+            createTime,
+            updateTime,
             agent,
             paymentType,
             imgUrl,
