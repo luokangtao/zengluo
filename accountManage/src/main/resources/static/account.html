@@ -45,8 +45,7 @@
                     <select class="form-control"  ng-model="findAccount.deteTime" ng-init="findAccount.deteTime='全部'"  ng-options="x for x in deteTimeList"></select>
                 </div><br>
             <div class="input-group" >
-                <button  type="button" class="btn btn-default" style="margin-right: 10px">查询</button>
-                <button  type="button" class="btn btn-default" ng-click="findAccount={}">重置</button>
+                <button  type="button" class="btn btn-default" ng-click="reloadList()">查询</button>
             </div><br>
 
             <table class="table table-hover">
@@ -108,7 +107,7 @@
                     </div><br>
                     <div class="input-group addClassify" >
                         <span class="input-group-addon">价钱:</span>
-                        <input type="text" class="form-control" ng-model="entity.money">
+                        <input type="text" class="form-control" ng-model="entity.money" placeholder="请输入数字:例如50元,则输入50">
                     </div><br>
             </div>
             <div class="modal-footer">
@@ -167,9 +166,9 @@
                 </div><br>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" type="button" ng-click="findEntity={}">重置</button>
-                <!--<button class="btn btn-primary" type="button" ng-click="deleteAccount(findEntity.id)">删除</button>-->
-                <button class="btn btn-primary" type="button" ng-click="addAccount()">修改</button>
+                <button class="btn btn-primary" type="button"  data-dismiss="modal">关闭</button>
+                <button class="btn btn-primary" type="button" ng-click="deleteAccount(findEntity.id)">删除</button>
+                <button class="btn btn-primary" type="button" ng-click="updateAccount(findEntity.id)">修改</button>
             </div>
         </div>
     </div>

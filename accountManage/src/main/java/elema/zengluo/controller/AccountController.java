@@ -74,7 +74,7 @@ public class AccountController {
         String imgUrl="";
 
         //图片
-        if(!file.isEmpty()){
+        if(file!=null&&file.getSize()>0){
             //获取源文件名字  比如: xxx.jpg 获取到"."位置
             int lastIndexOf = file.getOriginalFilename().lastIndexOf(".")+1;
 
@@ -147,19 +147,51 @@ public class AccountController {
     }
 
     /**
-     * 根据主键id修改收入支出账目
-     * @param Account
+     * 修改收入支出账目
+     * @param agent 经办人
+     * @param paymentType 收入/支出
+     * @param remark 备注
+     * @param money 金额
      * @return
      */
     @RequestMapping("/updateAccount")
-    public AccountResult updateAccount(@RequestBody Account Account){
+    public AccountResult updateAccount(String agent,String paymentType,String remark,String money,Integer id){
+        //校验
+        if(agent==null&&"".equals(agent)){
+            throw new AccountException("经办人不能为空");
+        }
+        if(paymentType==null&&"".equals(paymentType)){
+            throw new AccountException("支付类型不能为空");
+        }
+        if(remark==null&&"".equals(remark)){
+            throw new AccountException("备注不能为空");
+        }
+        if(money==null&&"".equals(money)){
+            throw new AccountException("金额不能为空");
+        }
 
+        //组装修改对象
+        Account account = new Account();
+        //设置id
+        account.setId(id);
+        //经办人
+        account.setAgent(agent);
+        //支出/收入
+        account.setPaymentType(paymentType);
+        //备注
+        account.setRemark(remark);
+        //转换string类型
+        BigDecimal decimal = new BigDecimal(money);
+        //保留2位小数
+        BigDecimal scale = decimal.setScale(2);
+        //钱
+        account.setMoney(scale);
         //修改
-        Integer integer = accountService.updateAccount(Account);
+        Integer integer = accountService.updateAccount(account);
 
         //返回结果集
         if(integer<=0){
-            accountResult=new AccountResult(false,"修改失败");
+            accountResult=new AccountResult(false,"修改失败,当天时间的数据才可以修改");
         }else {
             accountResult=new AccountResult(true,"修改成功");
         }
@@ -175,13 +207,19 @@ public class AccountController {
     @RequestMapping("/deleteAccount")
     public AccountResult deleteAccount(Integer id){
 
+        //首先查询他有没上传图片,有的话先删除
+        String url = accountService.findAccountImgUrl(id);
+
         //修改
         Integer integer = accountService.deleteAccount(id);
-
         //返回结果集
         if(integer<=0){
-            accountResult=new AccountResult(false,"删除失败");
+            accountResult=new AccountResult(false,"删除失败,当天时间的数据才可以删除");
         }else {
+            if(url!=null&&!"".equals(url)){
+                //删除linux里面的图片
+                delete(url);
+            }
             accountResult=new AccountResult(true,"删除成功");
         }
 

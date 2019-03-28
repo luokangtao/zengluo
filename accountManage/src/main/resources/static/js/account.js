@@ -19,7 +19,7 @@ mymodule.service("uploadService",function ($http) {
         formData.append("money",(money==undefined?"":money));
         return $http({
             method:"post",
-            url : "../uploadController/uploadImages",
+            url : "../accountController/addAccount",
             data : formData,
             headers : {'Content-Type' : undefined}, //上传文件必须是这个类型，默认text/plain  作用:相当于设置enctype="multipart/form-data"
             transformRequest : angular.identity  //对整个表单进行二进制序列化
@@ -76,7 +76,7 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
 
     //查询所有账目
     $scope.findAccountAll=function(pageNumber,pageSize){
-        $http.post("../accountController/findAccountAll?pageNumber="+pageNumber+"&"+"pageSize="+pageSize).success(function (response){
+        $http.post("../accountController/findAccountAll?pageNumber="+pageNumber+"&"+"pageSize="+pageSize+"&paymentType="+$scope.findAccount.paymentType+"&deteTime="+$scope.findAccount.deteTime).success(function (response){
             if(response.success){
                 //总记录条数--设置分页配置里面的参数$scope.paginationConf
                 $scope.paginationConf.totalItems=response.pageTotal;
@@ -102,7 +102,7 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
     $scope.findPaymentTypeList=["全部","收入","支出"];
 
     //定义时间类型
-    $scope.deteTimeList=["全部","今天","昨天","当月","上月"];
+    $scope.deteTimeList=["全部","今天","昨天","本周","本月"];
 
     //根据id删除账目
     $scope.deleteAccount=function (id) {
@@ -110,7 +110,8 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
             $http.post("../accountController/deleteAccount?id="+id).success(function (response) {
                 if(response.success){
                     alert(response.message);
-                    $scope.reloadList();//重新查询通信录
+                    $scope.findEntity={};//删除后
+                    $scope.reloadList();//重新查询账目
                 }else {
                     alert(response.message);//弹窗提示失败
                 }}).error(function (response) {//如果出现错误
@@ -129,6 +130,18 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
                 }}).error(function (response) {//如果出现错误
                 alert(response.message);//弹窗提示错误原因
             })};
+
+    //修改账目
+    $scope.updateAccount=function (id) {
+        $http.post("../accountController/updateAccount?agent="+$scope.findEntity.agent+"&paymentType="+$scope.findEntity.paymentType+"&remark="+$scope.findEntity.remark+"&money="+$scope.findEntity.money+"&id="+id).success(function (response) {
+            if(response.success){
+                alert(response.message);//弹窗提示成功
+                $scope.reloadList();//重新查询账目
+            }else {
+                alert(response.message);//弹窗提示失败
+            }}).error(function (response) {//如果出现错误
+            alert(response.message);//弹窗提示错误原因
+        })};
 
 
     //导出excel数据

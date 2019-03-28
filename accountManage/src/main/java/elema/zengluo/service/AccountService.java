@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author luokangtao
@@ -19,11 +20,9 @@ import java.util.List;
 @Service
 public class AccountService {
 
+    Logger logger = Logger.getLogger("AccountService");
     @Resource
     private  AccountMapper accountMapper;
-    //时间格式
-    private  SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 
     /**
      * 新增收入支出账单
@@ -42,7 +41,7 @@ public class AccountService {
     }
 
     /**
-     * 根据主键id修改收入支出账目
+     * 修改收入支出账目
      * @param account
      * @return
      */
@@ -80,8 +79,32 @@ public class AccountService {
     public AccountResult findAccountAll(Integer pageNumber, Integer pageSize, String paymentType, String deteTime) {
         //调用分页插件 当前页 当前页条数
         PageHelper.startPage(pageNumber,pageSize);
+        if(paymentType.equals("全部")){
+            paymentType=null;
+        }
+        if(deteTime.equals("全部")){
+            deteTime=null;
+        }
+        String deteTime0=null;
+        String deteTime1=null;
+        String deteTime2=null;
+        String deteTime3=null;
+
+        if(deteTime!=null&&deteTime.equals("今天")){
+            deteTime0="0";
+        }
+        if(deteTime!=null&&deteTime.equals("昨天")){
+            deteTime1="1";
+        }
+        if(deteTime!=null&&deteTime.equals("本周")){
+            deteTime2="2";
+        }
+        if(deteTime!=null&&deteTime.equals("本月")){
+            deteTime3="3";
+        }
+        logger.info("====>paymentType:"+paymentType+" <===> deteTime:"+deteTime+"<====");
         //根据条件分页查询
-        Page<Account> page =(Page<Account>)accountMapper.findAccountAll(paymentType,deteTime);
+        Page<Account> page =(Page<Account>)accountMapper.findAccountAll(paymentType,deteTime0,deteTime1,deteTime2,deteTime3);
         //获取总页数
         long pageTotal = page.getTotal();
         //获取结果集
@@ -104,4 +127,16 @@ public class AccountService {
         //返回结果集
         return account;
      }
+
+    /**
+     * 根据id查询图片地址
+     * @param id
+     * @return
+     */
+    public String findAccountImgUrl(Integer id) {
+        //根据id查询图片
+        String url = accountMapper.findAccountImgUrl(id);
+        //返回值
+        return  url;
+    }
 }
