@@ -93,10 +93,10 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
 
 
     //定义经办人
-    $scope.agentList=["曾利健","罗康涛","叶锐"];
+    $scope.agentList=["曾利健","罗康涛"];
 
     //定义查看的支付类型
-    $scope.paymentTypeList=["收入","支出"];
+    $scope.paymentTypeList=["收入","支出","其他"];
 
     //定义支付类型
     $scope.findPaymentTypeList=["全部","收入","支出"];
