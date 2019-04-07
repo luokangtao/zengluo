@@ -58,9 +58,10 @@ public class AccountController {
         }
         account.setPaymentType(paymentType);
         //备注
-        if(remark!=null&&!"".equals(remark)){
-            account.setRemark(remark);
+        if(remark==null&&"".equals(remark)){
+            throw new AccountException("备注不能为空");
         }
+        account.setRemark(remark);
         //钱
         if(money==null&&"".equals(money)){
             throw new AccountException("金额不能为空");

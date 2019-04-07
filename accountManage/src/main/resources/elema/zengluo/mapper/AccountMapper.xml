@@ -10,9 +10,9 @@
     <insert id="addAccount">
         INSERT INTO
             account
-        (createTime,agent,paymentType,imgUrl,money)
+        (createTime,agent,paymentType,imgUrl,remark,money)
         values
-        (#{createTime},#{agent},#{paymentType},#{imgUrl},#{money})
+        (#{createTime},#{agent},#{paymentType},#{imgUrl},#{remark},#{money})
     </insert>
 
     <!--大于或者等于当前时间: createTime > DATE_SUB(CURDATE(),INTERVAL 0 DAY) 才可以进行修改-->
