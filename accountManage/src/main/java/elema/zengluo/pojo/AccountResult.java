@@ -1,6 +1,7 @@
 package elema.zengluo.pojo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -21,6 +22,13 @@ public class AccountResult implements Serializable {
 
     //总条数
     private Long pageTotal;
+
+    //其他
+    private BigDecimal qita;
+    //收入
+    private BigDecimal shouru;
+    //支出
+    private BigDecimal zhichu;
 
     //集合实体类
     private List<Account> list;
@@ -47,6 +55,40 @@ public class AccountResult implements Serializable {
         this.message = message;
         this.pageTotal = pageTotal;
         this.list = list;
+    }
+
+    public AccountResult(Boolean success, String message, Long pageTotal, BigDecimal qita, BigDecimal shouru, BigDecimal zhichu, List<Account> list) {
+        this.success = success;
+        this.message = message;
+        this.pageTotal = pageTotal;
+        this.qita = qita;
+        this.shouru = shouru;
+        this.zhichu = zhichu;
+        this.list = list;
+    }
+
+    public BigDecimal getQita() {
+        return qita;
+    }
+
+    public void setQita(BigDecimal qita) {
+        this.qita = qita;
+    }
+
+    public BigDecimal getShouru() {
+        return shouru;
+    }
+
+    public void setShouru(BigDecimal shouru) {
+        this.shouru = shouru;
+    }
+
+    public BigDecimal getZhichu() {
+        return zhichu;
+    }
+
+    public void setZhichu(BigDecimal zhichu) {
+        this.zhichu = zhichu;
     }
 
     public Boolean getSuccess() {

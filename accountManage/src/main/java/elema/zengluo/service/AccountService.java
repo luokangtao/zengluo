@@ -8,6 +8,7 @@ import elema.zengluo.pojo.AccountResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -105,12 +106,30 @@ public class AccountService {
         logger.info("====>paymentType:"+paymentType+" <===> deteTime:"+deteTime+"<====");
         //根据条件分页查询
         Page<Account> page =(Page<Account>)accountMapper.findAccountAll(paymentType,deteTime0,deteTime1,deteTime2,deteTime3);
+        //查询其他
+        paymentType="其他";
+        BigDecimal qita = accountMapper.findSum(paymentType,deteTime0,deteTime1,deteTime2,deteTime3);
+        if(qita==null){
+            qita=BigDecimal.valueOf(0L);
+        }
+        //查询收入
+        paymentType="收入";
+        BigDecimal shouru=accountMapper.findSum(paymentType,deteTime0,deteTime1,deteTime2,deteTime3);
+        if(shouru==null){
+            shouru=BigDecimal.valueOf(0L);
+        }
+        //查询支出
+        paymentType="支出";
+        BigDecimal zhichu=accountMapper.findSum(paymentType,deteTime0,deteTime1,deteTime2,deteTime3);
+        if(zhichu==null){
+            zhichu=BigDecimal.valueOf(0L);
+        }
         //获取总页数
         long pageTotal = page.getTotal();
         //获取结果集
         List<Account> result = page.getResult();
         //组装结果集
-        AccountResult accountResult = new AccountResult(true, "查询成功", pageTotal, result);
+        AccountResult accountResult = new AccountResult(true, "查询成功",pageTotal,qita,shouru,zhichu,result);
         //返回结果集
         return accountResult;
     }

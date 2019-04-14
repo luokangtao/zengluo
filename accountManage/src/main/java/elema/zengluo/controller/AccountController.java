@@ -91,7 +91,7 @@ public class AccountController {
                     !substring.equalsIgnoreCase(ServiceConstant.IMG_FROMAT.PNG)&&
                     !substring.equalsIgnoreCase(ServiceConstant.IMG_FROMAT.GIF)){
                 //抛出异常
-                throw new AccountException("上传文件格式只支持jpg,png,gif");
+                throw new AccountException("上传文件格式只支持jpg,png,gif,您当前上传的格式为:"+substring);
             }
             //获取源文件名称
             String filename = file.getOriginalFilename();

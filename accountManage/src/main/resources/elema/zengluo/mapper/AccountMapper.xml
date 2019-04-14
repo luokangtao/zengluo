@@ -99,4 +99,29 @@
              id = #{id}
     </select>
 
+    <select id="findSum" resultType="java.math.BigDecimal">
+        SELECT
+          SUM(money)
+        FROM
+          account
+        WHERE
+          valid=1
+        <if test="paymentType!=null">
+            AND paymentType = #{paymentType}
+        </if>
+        <if test="deteTime0!=null">
+            AND createTime &gt; DATE_SUB(CURDATE(),INTERVAL 0 DAY)
+        </if>
+        <if test="deteTime1!=null">
+            AND createTime &lt; DATE_SUB(CURDATE(),INTERVAL 0 DAY)
+            AND createTime &gt; DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+        </if>
+        <if test="deteTime2!=null">
+            AND YEARWEEK(DATE_FORMAT(createTime,'%Y-%m-%d')) = YEARWEEK(NOW())
+        </if>
+        <if test="deteTime3!=null">
+            AND DATE_FORMAT(createTime,'%Y-%m')=DATE_FORMAT(NOW(),'%Y-%m')
+        </if>
+    </select>
+
 </mapper>

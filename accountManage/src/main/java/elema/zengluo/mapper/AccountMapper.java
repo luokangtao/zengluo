@@ -4,6 +4,7 @@ import elema.zengluo.pojo.Account;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -56,4 +57,14 @@ public interface AccountMapper {
      */
     String findAccountImgUrl(Integer id);
 
+    /**
+     * 根据条件查询其他,收入,支出
+     * @param paymentType
+     * @param deteTime0
+     * @param deteTime1
+     * @param deteTime2
+     * @param deteTime3
+     * @return
+     */
+    BigDecimal findSum(@Param("paymentType") String paymentType,@Param("deteTime0") String deteTime0,@Param("deteTime1") String deteTime1,@Param("deteTime2") String deteTime2,@Param("deteTime3") String deteTime3);
 }

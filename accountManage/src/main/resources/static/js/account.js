@@ -81,6 +81,9 @@ mymodule.controller("accountController",function ($scope,$http,$filter,uploadSer
                 //总记录条数--设置分页配置里面的参数$scope.paginationConf
                 $scope.paginationConf.totalItems=response.pageTotal;
                 $scope.list=response.list;
+                $scope.qita=response.qita;
+                $scope.shouru=response.shouru;
+                $scope.zhichu=response.zhichu;
             }}).error(function (response) {
             alert(response.message);
         })};
